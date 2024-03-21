@@ -223,7 +223,8 @@ class Predictor(BasePredictor):
         )
         self.setup_extra_controlnets()
 
-        self.load_weights("stable-diffusion-xl-base-1.0")
+        # self.load_weights("stable-diffusion-xl-base-1.0")
+        self.load_weights("dynavision-xl-v0610")        
         self.setup_safety_checker()
 
     def setup_safety_checker(self):
@@ -289,11 +290,11 @@ class Predictor(BasePredictor):
             )
 
         self.pipe.load_ip_adapter_instantid(self.face_adapter)
-        self.setup_lcm_lora()
+        # self.setup_lcm_lora() # removed from here, put down.
         self.pipe.cuda()
 
     def setup_lcm_lora(self):
-        print(f"[~] Seting up LCM (just in case)")
+        # print(f"[~] Seting up LCM (just in case)")
 
         lcm_lora_key = "models--latent-consistency--lcm-lora-sdxl"
         lcm_lora_path = f"checkpoints/{lcm_lora_key}"
@@ -379,6 +380,8 @@ class Predictor(BasePredictor):
         enhance_face_region,
     ):
         if enable_LCM:
+            print(f"[~] Seting up LCM because it's enabled.")
+            self.setup_lcm_lora()
             self.pipe.enable_lora()
             self.pipe.scheduler = LCMScheduler.from_config(self.pipe.scheduler.config)
         else:
